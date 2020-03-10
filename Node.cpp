@@ -11,7 +11,7 @@ using namespace std;
 
 //Constructor
 Node::Node(int newVal) {
-	val = newVal
+	val = newVal;
 	right = NULL;
 	left = NULL;
 }
@@ -39,6 +39,7 @@ Node* Node::getLeft(){
 
 //deconstructor
 Node::~Node(){
-	delete[] val;
-	next= NULL;
+	val = 0;
+	right = NULL;
+	left = NULL;
 }
