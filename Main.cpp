@@ -6,7 +6,7 @@ using namespace std;
 void addNode(Node*&, int);
 void traverse(Node*, int);
 bool search(Node*, int);
-void commands(Node*&);
+void deleteNode(Node*&, int);
 int main(){
 	Node* head = NULL;
 	while(true){
@@ -38,6 +38,13 @@ int main(){
 				cout<<"The node was not found"<<endl;
 			}
 		}
+		else if(strcmp(input, "DELETE") == 0){
+			int val;
+			cout<<"Enter the value you want to delete: ";
+			cin>>val;
+			cin.ignore(0);
+			deleteNode(head, val);
+		}
 		else if(strcmp(input, "QUIT") == 0){
 			return 0;
 		}
@@ -48,7 +55,7 @@ void addNode(Node* &head, int val){
 		head = new Node(val);
 		return;
 	}
-	if(head->getVal()>val){
+	if(head->getVal()<val){
 		if(head->getRight() == NULL){
 			head->setRight(new Node (val));
 			return;
@@ -73,19 +80,38 @@ void addNode(Node* &head, int val){
 bool search(Node* head, int val){
 	cout<<val<<" "<<head->getVal()<<endl;
 	if(head == NULL) return false;
-	if(val == head->getVal()) return true;
-	if(head->getVal()>val) return search(head->getRight(), val);
-	else if(val<= head->getVal()) return search(head->getLeft(), val);
+	if(head->getVal()<val) return search(head->getRight(), val);
+	else if(val< head->getVal()) return search(head->getLeft(), val);
+	else return true;
 }
 
 void traverse(Node* head, int depth){
 	//recursivly go to the left branch
 	if(head == NULL)return;
-	if(head->getLeft() != NULL) traverse(head->getLeft(), depth+1);
+	if(head->getRight() != NULL) traverse(head->getRight(), depth+1);
 	//print out spaces for formating depth number of times
 	for (int i = 0; i < depth; i++) cout << "      ";
 	//print out the actual value
 	cout <<head->getVal()<< endl;
 	//recursivly go to the right branch
-	if(head->getRight() != NULL) traverse(head->getRight(), depth+1);
+	if(head->getLeft() != NULL) traverse(head->getLeft(), depth+1);
+}
+void deleteNode(Node*&head, int val){
+	if(head == NULL) return;
+	if(val>head->getVal()){
+		Node* right = head->getRight();
+		deleteNode(right, val);		
+	}
+	else if(val<head->getVal()){
+		Node* left = head->getLeft();
+		deleteNode(left, val);
+	}
+	else{
+		if(head->getLeft() == NULL){
+			Node* temp = head->getRight();
+			delete head;
+			head = temp;
+		}	
+	}
+
 }
