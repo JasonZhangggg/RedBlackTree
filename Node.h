@@ -18,20 +18,24 @@ class Node{
 		Node(int);
 		//get the val
 		int getVal();
+		void setVal(int);
 		//get the node to the right
 		Node* getRight();
 		//get the node to the left
 		Node* getLeft();
+		Node* getParent();
 		//set the node to the right
 		void setRight(Node*);
 		//set the node to the left
 		void setLeft(Node*);
+		void setParent(Node*);
 		//deconstructor
 		~Node();
 	private:
 		//right and left node
 		Node* right;
 		Node* left;
+		Node* parent;
 		//val of node
 		int val;	
 };
