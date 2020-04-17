@@ -14,6 +14,7 @@ Node::Node(int newVal) {
 	val = newVal;
 	right = NULL;
 	left = NULL;
+	parent = NULL;
 }
 
 //get val of node
@@ -45,6 +46,12 @@ Node* Node::getLeft(){
 
 Node* Node::getParent(){
 	return parent;
+}
+void Node::setColor(int newColor){
+	color = newColor;
+}
+int Node::getColor(){
+	return color;
 }
 //deconstructor
 Node::~Node(){

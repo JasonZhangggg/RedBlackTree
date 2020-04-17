@@ -100,7 +100,7 @@ int main(){
 		cout<<endl<<"__________________________________________________________________________________________________"<<endl;
 	}
 }
-void addNode(Node* &head, int val, Node* parent){
+void addNode(Node* &head, int val){
 	//if head is NULL declare it
 	if(head == NULL){
 		head = new Node(val);
@@ -111,12 +111,13 @@ void addNode(Node* &head, int val, Node* parent){
 		//if we are at the base of the tree, add the node to the right of the current node
 		if(head->getRight() == NULL){
 			head->setRight(new Node (val));
+			head->getRight()->setParent(head);
 			return;
 		}
 		//else recursivly traverse right
 		else{
 			Node* right = head->getRight();
-			addNode(right, val, head);
+			addNode(right, val);
 		}	
 	}
 	//if input val is smaller then head
@@ -124,122 +125,36 @@ void addNode(Node* &head, int val, Node* parent){
 		//if we are at the end of the tree, add the node to the left of the current node
 		if(head->getLeft() == NULL){
 			head->setLeft(new Node(val));
+			head->getLeft()->setParent(head);
 			return;
 		}
 		//otherwise traverse left
 		else{
 			Node* left = head->getLeft();
-			addNode(left, val, head);
+			addNode(left, val);
 		}
 	}
 }
-//search for a node
-bool search(Node* head, int val){
-	//if tree is empty or we reached the end, return false
-	if(head == NULL) return false;
-	//if we found the value return true
-	if(head->getVal() == val) return true;
-	//if the input value is less then the current value, recursivly traverse right
-	if(head->getVal()<val) return search(head->getRight(), val);
-	//if the input value is greater then the current value, recursivly traverse left
-	else if(val< head->getVal()) return search(head->getLeft(), val);
-}
-
-void traverse(Node* head, int depth){
-	//recursivly go to the left branch
-	if(head == NULL)return;
-	if(head->getRight() != NULL) traverse(head->getRight(), depth+1);
-	//print out spaces for formating depth number of times
-	for (int i = 0; i < depth; i++) cout << "      ";
-	//print out the actual value
-	cout <<head->getVal()<< endl;
-	//recursivly go to the right branch
-	if(head->getLeft() != NULL) traverse(head->getLeft(), depth+1);
-}
-//dir = 0: right
-//dir = 1: left
-void deleteNode(Node*&head, int val, Node*& parent, int dir){
-	//if tree is empty return
-	if(head == NULL) return;
-	//recursivly traverse until we find the node we are looking for
-	if(val>head->getVal()){
-		Node* right = head->getRight();
-		deleteNode(right, val, head, 0);
+void rotateLeft(Node* &head, Node* &parent){
+	Node* &pt_right = parent->getRight();
+	parent->setRight(pt_right->getLeft());
+	if(parent->getRight()!=NULL){
+		parent->getRight()->setParent(parent);
 	}
-	else if(val<head->getVal()){
-		Node* left = head->getLeft();
-		deleteNode(left, val, head, 1);
+	pt_right->setParent(parent->getParent());
+	if(parent->getParent() == NULL){
+		head=pt_right;
+	}
+	else if(parent == parent->getParent()->getLeft()){
+		parent->getParent()->setLeft(pt_right);
 	}
 	else{
-		//if the node has no children
-		if(head->getLeft() == NULL && head->getRight() == NULL){
-			//not the root node
-			if(parent != head){
-				//set the parent node's value to NULL
-				if(dir == 1){
-					parent->setLeft(NULL);
-				}
-				else{
-					parent->setRight(NULL);
-				}
-			}
-			//delete
-			delete head;
-			head = NULL;
-			return;
-
-		}
-		//if there is one child
-		else if(head->getLeft() == NULL){
-			Node* temp = head->getRight();
-			//check if the node has a parent
-			if(parent != head){
-				//if so, set the parent node's value to NULL
-				if(dir == 0){
-					parent->setRight(temp);
-				}
-				else{
-					parent->setLeft(temp);
-				}
-			}
-			//delete
-			delete head;
-			head = temp;
-			return;
-		}
-		//same thing but for the right branch
-		else if(head->getRight() == NULL){
-			Node* temp = head->getLeft();
-			if(parent != head){
-				if(dir == 1){
-					parent->setLeft(temp);
-				}
-				else{
-					parent->setRight(temp);
-				}
-			}
-
-			delete head;
-			head = temp;
-			return;
-		}
-		//the node has 2 children
-		else{
-			//get the inorder sucsesor
-			Node* right = head->getRight();
-			Node* suc = minVal(right);
-			//swap the value of the inorder sucsesor and the value we are deleting
-			head->setVal(suc->getVal());
-			//delete the inorder sucsesor
-			deleteNode(right, suc->getVal(), head, 0);
-		}
+		parent->getParent()->setRight(pt_right);
 	}
-	return;
+	pt_right->setLeft(parent);
+	parent->setParent(pt_right);
 }
-Node* minVal(Node* head){
-	//recursivly loop thourgh until we reach the left most part of the tree(smallest val)
-	if(head->getLeft() == NULL){
-		return head;
-	}
-	minVal(head->getLeft());
+void rotateRight(Node* &root, Node* &parent){
+	Node *pt_left = parent->getLeft();
+
 }

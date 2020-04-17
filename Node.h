@@ -36,6 +36,8 @@ class Node{
 		Node* right;
 		Node* left;
 		Node* parent;
+		//1 if node is red 2 if node is black
+		int color;
 		//val of node
 		int val;	
 };
