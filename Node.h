@@ -30,6 +30,8 @@ class Node{
 		void setLeft(Node*);
 		void setParent(Node*);
 		//deconstructor
+		void setColor(int);
+		int getColor();
 		~Node();
 	private:
 		//right and left node

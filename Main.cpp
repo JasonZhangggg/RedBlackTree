@@ -11,11 +11,9 @@
 #include <cstdlib>
 
 using namespace std;
-
-void addNode(Node*&, int, Node*);
-void traverse(Node*, int);
-bool search(Node*, int);
-void deleteNode(Node*&, int, Node*&, int);
+void rotateLeft(Node*&, Node*&);
+void rotateRight(Node*&, Node*&);
+void addNode(Node*&, int);
 Node* minVal(Node*);
 int main(){
 	//declare head
@@ -23,6 +21,7 @@ int main(){
 	char inType;
 	char input[100];
 	//ask for input type
+	/*
 	cout<<"Type 1 for file input and 2 for manual input"<<endl;
 	cin>>inType;
 	cin.ignore();
@@ -51,9 +50,9 @@ int main(){
 	char* list = strtok(input, " ");
 	while(list){
 		//add node
-		addNode(head, atoi(list), NULL);
+		addNode(head, atoi(list));
 		list = strtok(NULL, " ");
-	}
+	}*/
 	while(true){
 		cout<<"Type ADD to add, PRINT to print, SEARCH to search for a value, QUIT to quit, and DELETE to delete a node"<<endl;
 		char* input = new char();
@@ -67,33 +66,9 @@ int main(){
 			cout<<"Enter the val you want to add: ";
 			cin>>val;
 			cin.ignore();
-			addNode(head, val, NULL);
+			addNode(head, val);
 		}	
 		//display tree
-		else if(strcmp(input, "PRINT") == 0){
-			traverse(head, 0);
-		}
-		//search for a node
-		else if(strcmp(input, "SEARCH") == 0){
-			int val;
-			cout<<"Enter the value you want to search for: ";	
-			cin>>val;
-			cin.ignore();
-			if(search(head, val) == 1){
-				cout<<"The node was found"<<endl;
-			}
-			else{
-				cout<<"The node was not found"<<endl;
-			}
-		}
-		//delete a node
-		else if(strcmp(input, "DELETE") == 0){
-			int val;
-			cout<<"Enter the value you want to delete: ";
-			cin>>val;
-			cin.ignore();
-			deleteNode(head, val, head, -1);
-		}
 		else if(strcmp(input, "QUIT") == 0){
 			return 0;
 		}
@@ -136,7 +111,7 @@ void addNode(Node* &head, int val){
 	}
 }
 void rotateLeft(Node* &head, Node* &parent){
-	Node* &pt_right = parent->getRight();
+	Node* pt_right = parent->getRight();
 	parent->setRight(pt_right->getLeft());
 	if(parent->getRight()!=NULL){
 		parent->getRight()->setParent(parent);
@@ -156,5 +131,20 @@ void rotateLeft(Node* &head, Node* &parent){
 }
 void rotateRight(Node* &root, Node* &parent){
 	Node *pt_left = parent->getLeft();
-
+	parent->setLeft(pt_left->getRight());
+	if(parent->getLeft() != NULL){
+		parent->getLeft()->setParent(parent);
+	}
+	pt_left->setParent(parent->getParent());
+	if(parent->getParent() == NULL){
+		root = pt_left;
+	}
+	else if(parent == parent->getParent()->getLeft()){
+		parent->getParent()->setLeft(pt_left);
+	}
+	else{
+		parent->getParent()->setRight(pt_left);
+	}
+	pt_left->setRight(parent);
+	parent->setParent(pt_left);
 }
