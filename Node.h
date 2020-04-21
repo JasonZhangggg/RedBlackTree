@@ -1,7 +1,7 @@
 /*
    Jason Zhang
-   Shunting Yard
-   2/20/2020
+   RBT
+   4/21/2020
    */
 
 #include <iostream>
@@ -28,15 +28,22 @@ class Node{
 		void setRight(Node*);
 		//set the node to the left
 		void setLeft(Node*);
+		//set parent
 		void setParent(Node*);
-		//deconstructor
+		//set color
 		void setColor(int);
+		//get color
 		int getColor();
+		//get grandparent
 		Node* getGp();
+		//get sibling
 		Node* getSibling();
+		//get uncle
 		Node* getUncle();
+		//rotate left and right
 		void rotateLeft();
 		void rotateRight();
+		//deconstructor
 		~Node();
 	private:
 		//right and left node
