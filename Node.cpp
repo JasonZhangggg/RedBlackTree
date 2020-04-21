@@ -15,6 +15,7 @@ Node::Node(int newVal) {
 	right = NULL;
 	left = NULL;
 	parent = NULL;
+	color = 1;
 }
 
 //get val of node
@@ -53,6 +54,65 @@ void Node::setColor(int newColor){
 int Node::getColor(){
 	return color;
 }
+Node* Node::getGp(){
+	return parent->getParent();
+}
+Node* Node::getSibling(){
+	if(parent == NULL){
+		return NULL;
+	}
+	if(this == parent->getLeft()){
+		return parent->getRight();
+	}
+	else{
+		return parent->getLeft();
+	}
+}
+Node* Node::getUncle(){
+	if(parent == NULL) return NULL;
+	return parent->getSibling();
+}
+void Node::rotateLeft(){
+	Node* r = right;
+	Node* p = parent;
+	if(r = NULL) return;
+	right = r->getLeft();
+	r->setLeft(this);
+	parent = r;
+	if(right != NULL){
+		right->setParent(this);
+	}
+	if (p != NULL) {
+		if (this == p->getLeft()) {
+			p->setLeft(r);
+		} else if (this == p->getRight()) {
+			p->setRight(r);
+		}
+	}
+	r->setParent(p);
+}
+void Node::rotateRight() {
+	Node* l = left;
+	Node* p = parent;
+	if(l == NULL) return;
+	left = l->getRight();
+	l->setRight(this);
+	parent = l;
+
+	if (left != NULL) {
+		left->setParent(this);
+	}
+
+	if (p != NULL) {
+		if (this == p->getLeft()) {
+			p->setLeft(l);
+		} else if (this == p->getRight()) {
+			p->setRight(l);
+		}
+	}
+	l->setParent(p);
+}
+
 //deconstructor
 Node::~Node(){
 	//val = 0;

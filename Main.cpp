@@ -13,15 +13,24 @@
 using namespace std;
 void rotateLeft(Node*&, Node*&);
 void rotateRight(Node*&, Node*&);
-void addNode(Node*&, int);
-Node* minVal(Node*);
+void addNode(Node*&, Node*);
+void insert(Node*&, int);
+void case1(Node*&);
+void case2();
+void case3(Node*&, Node* &);
+void case4(Node*&, Node* &);
+void case4Step2(Node *&, Node*&);
+void repairTree(Node*&, Node*&);
+void traverse(Node*, int);
+
+
 int main(){
 	//declare head
 	Node* head = NULL;
 	char inType;
 	char input[100];
 	//ask for input type
-	/*
+
 	cout<<"Type 1 for file input and 2 for manual input"<<endl;
 	cin>>inType;
 	cin.ignore();
@@ -50,9 +59,9 @@ int main(){
 	char* list = strtok(input, " ");
 	while(list){
 		//add node
-		addNode(head, atoi(list));
+		insert(head, atoi(list));
 		list = strtok(NULL, " ");
-	}*/
+	}
 	while(true){
 		cout<<"Type ADD to add, PRINT to print, SEARCH to search for a value, QUIT to quit, and DELETE to delete a node"<<endl;
 		char* input = new char();
@@ -66,85 +75,122 @@ int main(){
 			cout<<"Enter the val you want to add: ";
 			cin>>val;
 			cin.ignore();
-			addNode(head, val);
+			insert(head, val);
 		}	
 		//display tree
+		else if(strcmp(input, "PRINT") == 0){
+			traverse(head, 0);
+		}
 		else if(strcmp(input, "QUIT") == 0){
 			return 0;
 		}
 		cout<<endl<<"__________________________________________________________________________________________________"<<endl;
 	}
 }
-void addNode(Node* &head, int val){
+void insert(Node* &head, int val){
+	Node* n = new Node(val);
+	addNode(head, n);
+	repairTree(n, head);
+}
+void addNode(Node* &head, Node* n){
 	//if head is NULL declare it
 	if(head == NULL){
-		head = new Node(val);
+		head = n;
 		return;
 	}
 	//the input val is larger then head
-	if(head->getVal()<val){
+	if(head->getVal()<n->getVal()){
 		//if we are at the base of the tree, add the node to the right of the current node
 		if(head->getRight() == NULL){
-			head->setRight(new Node (val));
+			head->setRight(n);
 			head->getRight()->setParent(head);
 			return;
 		}
 		//else recursivly traverse right
 		else{
 			Node* right = head->getRight();
-			addNode(right, val);
+			addNode(right, n);
 		}	
 	}
 	//if input val is smaller then head
 	else{
 		//if we are at the end of the tree, add the node to the left of the current node
 		if(head->getLeft() == NULL){
-			head->setLeft(new Node(val));
+			head->setLeft(n);
 			head->getLeft()->setParent(head);
 			return;
 		}
 		//otherwise traverse left
 		else{
 			Node* left = head->getLeft();
-			addNode(left, val);
+			addNode(left, n);
 		}
 	}
 }
-void rotateLeft(Node* &head, Node* &parent){
-	Node* pt_right = parent->getRight();
-	parent->setRight(pt_right->getLeft());
-	if(parent->getRight()!=NULL){
-		parent->getRight()->setParent(parent);
+
+void repairTree(Node* &n, Node* &head){
+	if(n->getParent() == NULL){
+		case1(n);
 	}
-	pt_right->setParent(parent->getParent());
-	if(parent->getParent() == NULL){
-		head=pt_right;
+	else if(n->getParent()->getColor() == 2){
+		case2();	
 	}
-	else if(parent == parent->getParent()->getLeft()){
-		parent->getParent()->setLeft(pt_right);
+	else if (n->getUncle() != NULL && n->getUncle()->getColor() == 1){
+		case3(n, head);
 	}
 	else{
-		parent->getParent()->setRight(pt_right);
+		case4(n, head);
 	}
-	pt_right->setLeft(parent);
-	parent->setParent(pt_right);
+
 }
-void rotateRight(Node* &root, Node* &parent){
-	Node *pt_left = parent->getLeft();
-	parent->setLeft(pt_left->getRight());
-	if(parent->getLeft() != NULL){
-		parent->getLeft()->setParent(parent);
-	}
-	pt_left->setParent(parent->getParent());
-	if(parent->getParent() == NULL){
-		root = pt_left;
-	}
-	else if(parent == parent->getParent()->getLeft()){
-		parent->getParent()->setLeft(pt_left);
-	}
-	else{
-		parent->getParent()->setRight(pt_left);
-	}
-	pt_left->setRight(parent);
-	parent->setParent(pt_left);
+void case1(Node* &n){
+	n->setColor(2);
 }
+void case2(){
+	return;
+}
+void case3(Node* &n, Node* &head){
+	n->getParent()->setColor(2);
+	n->getUncle()->setColor(2);
+	n->getGp()->setColor(1);
+	Node* gp = n->getGp();
+	repairTree(gp, head);
+}
+void case4(Node* &n, Node* &head){
+	Node* p = n->getParent();
+	Node* g = n->getGp();
+	if (n == p->getRight() && p == g->getLeft()) {
+		p->rotateLeft();
+		n = n->getLeft();
+	} else if (n == p->getLeft() && p == g->getRight()) {
+		p->rotateRight();
+		n = n->getRight();
+	}
+	case4Step2(n, head);
+}
+void case4Step2(Node* &n, Node* &head){
+	Node* p = n->getParent();
+	Node* g = n->getGp();
+
+	if (n == p->getLeft()) {
+		g->rotateRight();
+	} else {
+		g->rotateLeft();
+	}
+	if(g == head) head = p;
+	p->setColor(2);
+	g->setColor(1);
+}
+
+
+void traverse(Node* head, int depth){
+	if(head == NULL)return;
+	if(head->getRight() != NULL) traverse(head->getRight(), depth+1);
+	for (int i = 0; i < depth; i++) cout << "      ";
+	if(head->getColor() == 1)cout <<"\033[1;31m"<<head->getVal()<<"\033[0m"<<endl;
+	else cout<<"\033[1;30m"<<head->getVal()<<"\033[0m"<<endl;
+	if(head->getLeft() != NULL) traverse(head->getLeft(), depth+1);
+}
+
+
+

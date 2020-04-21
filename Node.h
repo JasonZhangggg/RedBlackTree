@@ -32,6 +32,11 @@ class Node{
 		//deconstructor
 		void setColor(int);
 		int getColor();
+		Node* getGp();
+		Node* getSibling();
+		Node* getUncle();
+		void rotateLeft();
+		void rotateRight();
 		~Node();
 	private:
 		//right and left node
