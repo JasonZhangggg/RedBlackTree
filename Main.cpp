@@ -1,7 +1,7 @@
 /*
  * Jason Zhang
- * Binary Search Tree
- * 3/19/2020
+ * RBT
+ * 4/20/2020
  */
 
 #include <iostream>
@@ -88,8 +88,10 @@ int main(){
 	}
 }
 void insert(Node* &head, int val){
+	//create a node with the value and add it to the tree
 	Node* n = new Node(val);
 	addNode(head, n);
+	//repair the tree
 	repairTree(n, head);
 }
 void addNode(Node* &head, Node* n){
@@ -127,22 +129,27 @@ void addNode(Node* &head, Node* n){
 		}
 	}
 }
-
+//psudo code from https://en.wikipedia.org/wiki/Red-black_tree
 void repairTree(Node* &n, Node* &head){
+	//if it is the root case
 	if(n->getParent() == NULL){
 		case1(n);
 	}
+	//if the parent is red, do nothing
 	else if(n->getParent()->getColor() == 2){
 		case2();	
 	}
+	//if the uncle is red
 	else if (n->getUncle() != NULL && n->getUncle()->getColor() == 1){
 		case3(n, head);
 	}
+	//otherwise
 	else{
 		case4(n, head);
 	}
 
 }
+//set color to reed
 void case1(Node* &n){
 	n->setColor(2);
 }
@@ -150,19 +157,27 @@ void case2(){
 	return;
 }
 void case3(Node* &n, Node* &head){
+	//set color of parent an uncle to black
 	n->getParent()->setColor(2);
 	n->getUncle()->setColor(2);
+	//set color of grandparent to red
 	n->getGp()->setColor(1);
+	//rerun repair tree with grandparent
 	Node* gp = n->getGp();
 	repairTree(gp, head);
 }
 void case4(Node* &n, Node* &head){
 	Node* p = n->getParent();
 	Node* g = n->getGp();
+	//if the current node is on the right of parent and the parent is on the left of gp
 	if (n == p->getRight() && p == g->getLeft()) {
+		//rotate tree left
 		p->rotateLeft();
+		cout<<"test"<<endl;
 		n = n->getLeft();
-	} else if (n == p->getLeft() && p == g->getRight()) {
+	} 
+	//if the current node is on the left of parent and the parent is on the right of gp
+	else if (n == p->getLeft() && p == g->getRight()) {
 		p->rotateRight();
 		n = n->getRight();
 	}
@@ -171,24 +186,34 @@ void case4(Node* &n, Node* &head){
 void case4Step2(Node* &n, Node* &head){
 	Node* p = n->getParent();
 	Node* g = n->getGp();
-
+	//if the node is on the left
 	if (n == p->getLeft()) {
+		//rotate right
 		g->rotateRight();
-	} else {
+	} 
+	//if the node is on the right
+	else {
+		//rotate left
 		g->rotateLeft();
 	}
+	//if it is the root case, set head to parent
 	if(g == head) head = p;
+	//set parent color to black and grandparent color to red
 	p->setColor(2);
 	g->setColor(1);
 }
 
-
+//infix traversal
 void traverse(Node* head, int depth){
+	//recursivly go to the right branch
 	if(head == NULL)return;
 	if(head->getRight() != NULL) traverse(head->getRight(), depth+1);
+	//print out space for formating
 	for (int i = 0; i < depth; i++) cout << "      ";
+	//depending on the color, print a different color
 	if(head->getColor() == 1)cout <<"\033[1;31m"<<head->getVal()<<"\033[0m"<<endl;
 	else cout<<"\033[1;30m"<<head->getVal()<<"\033[0m"<<endl;
+	//recursivly go to the left branch
 	if(head->getLeft() != NULL) traverse(head->getLeft(), depth+1);
 }
 

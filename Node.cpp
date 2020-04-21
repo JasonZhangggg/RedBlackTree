@@ -44,19 +44,24 @@ void Node::setParent(Node* newParent){
 Node* Node::getLeft(){
 	return left;
 }
-
+//get parent
 Node* Node::getParent(){
 	return parent;
 }
+//set color
 void Node::setColor(int newColor){
 	color = newColor;
 }
+//get color
 int Node::getColor(){
 	return color;
 }
+//psudo-code from https://en.wikipedia.org/wiki/Red-black_tree
+//get grandparent
 Node* Node::getGp(){
 	return parent->getParent();
 }
+//get sibling
 Node* Node::getSibling(){
 	if(parent == NULL){
 		return NULL;
@@ -68,14 +73,16 @@ Node* Node::getSibling(){
 		return parent->getLeft();
 	}
 }
+//get uncle
 Node* Node::getUncle(){
 	if(parent == NULL) return NULL;
 	return parent->getSibling();
 }
+//rotate left
 void Node::rotateLeft(){
 	Node* r = right;
 	Node* p = parent;
-	if(r = NULL) return;
+	if(r == NULL) return;
 	right = r->getLeft();
 	r->setLeft(this);
 	parent = r;
@@ -91,6 +98,7 @@ void Node::rotateLeft(){
 	}
 	r->setParent(p);
 }
+//rotate right
 void Node::rotateRight() {
 	Node* l = left;
 	Node* p = parent;
