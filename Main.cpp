@@ -22,7 +22,14 @@ void case4(Node*&, Node* &);
 void case4Step2(Node *&, Node*&);
 void repairTree(Node*&, Node*&);
 void traverse(Node*, int);
-
+void replaceNode(Node* &, Node*&);
+void deleteOnlyChild(Node*&);
+void DeleteCase1(Node*&);
+void DeleteCase2(Node*&);
+void DeleteCase3(Node*&);
+void DeleteCase4(Node*&);
+void DeleteCase5(Node*&);
+void DeleteCase6(Node*&);
 
 int main(){
 	//declare head
@@ -217,5 +224,101 @@ void traverse(Node* head, int depth){
 	if(head->getLeft() != NULL) traverse(head->getLeft(), depth+1);
 }
 
+void replaceNode(Node* &n, Node* &child){
+	child->setParent(n->getParent());
+	if(n == n->getParent()->getLeft()){
+		n->getParent()->setLeft(child);
+	} else{
+		n->getParent()->setRight(child);
+	}
+}
+void DeleteOneChild(Node* &n){
+	Node* child;
+	if(n->getRight() == NULL){
+		child = n->getLeft();
+	}
+	else{
+		child = n->getRight();
+	}
+	replaceNode(n, child);
+	if(n->getColor() == 2){
+		if(child->getColor() == 1){
+			child->setColor(2);
+		}
+		else{
+			DeleteCase1(child);
+		}
+	}
+}
+void DeleteCase1(Node* &n){
+	if(n->getParent() != NULL){
+		DeleteCase2(n);
+	}
+}
+void DeleteCase2(Node* &n){
+	Node* s = n->getSibling();
+	if(s->getColor() == 1){
+		n->getParent()->setColor(1);
+		s->setColor(2);
+		Node* p = n->getParent();
+		if(n == n->getParent()->getLeft()){
+			n->getParent()->rotateLeft();
+		}
+		else{
+			n->getParent()->rotateRight();
+		}
+	}
+	DeleteCase3(n);
+}
+void DeleteCase3(Node* &n){
+	Node* s = n->getSibling();
+	if((n->getParent()->getColor() == 2) && (s->getColor() == 2) && (s->getLeft()->getColor() == 2) && (s->getRight()->getColor() == 2)) {
+		s->setColor(1);
+		Node* p = n->getParent();
+		DeleteCase1(p);
+	}
+	else{
+		DeleteCase4(n);
+	}
+}
+void DeleteCase4(Node* &n){
+	Node* s = n->getSibling();
+	if((n->getParent()->getColor() == 1) && (s->getColor() == 2) && (s->getLeft()->getColor() == 2) && (s->getRight()->getColor() == 2)){
+		s->setColor(1);
+		n->getParent()->setColor(2);
+	}
+	else{
+		DeleteCase4(n);
+	}
+}
+void DeleteCase5(Node* &n){
+	Node* s = n->getSibling();
+	if(s->getColor() == 2){
+		if((n == n->getParent()->getLeft()) && (s->getRight()->getColor() == 2) && s->getLeft()->getColor() == 1){
+			s->setColor(1);
+			s->getLeft()->setColor(2);
+			s->rotateRight();
+		}
+		else if((n==n->getParent()->getRight()) && (s->getLeft()->getColor() == 2) && (s->getRight()->getColor() == 2)){
+			s->setColor(1);
+			s->getRight()->setColor(2);
+			s->rotateLeft();
+		}
+	}	
+	DeleteCase6(n);
+}
+void DeleteCase6(Node* &n){
+	Node* s = n->getSibling();
+	s->setColor(n->getParent()->getColor());
+	n->getParent()->setColor(2);
+	if(n == n->getParent()->getLeft()){
+		s->getRight()->setColor(2);
+		n->getParent()->rotateLeft();
 
+	}
+	else{
+		s->getLeft()->setColor(2);
+		n->getParent()->rotateRight();
+	}
 
+}
